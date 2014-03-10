@@ -22,10 +22,10 @@ class EventHandler {
     
     /**
      * Set current skin name from "useskin" param or from cookie.
-     * 
+     *
      * If param or cookie contains a skin name, `$skin` is overwritten with the 
      * stored skin name.
-     * 
+     *
      * @param \RequestContext $context
      * @param mixed $skin Skin name (object or string)
      * @return boolean Always returns true to enable other plugins to modify `$skin`
@@ -33,6 +33,10 @@ class EventHandler {
     public function onRequestContextCreateSkin($context, &$skin) {
         $request = $context->getRequest();
         
+        if ($this->userHasSkinSetting($context)) {
+            return true;
+        }
+
         // use new skin via useskin param 
         $useskin = $request->getVal("useskin"); 
         if ($useskin) {
@@ -56,6 +60,29 @@ class EventHandler {
             return true;
         }
         return true;
+    }
+    
+    /**
+     * Check if user has chosen a different skin than the default one.
+     *
+     * @global array $wgHiddenPrefs
+     * @global string $wgDefaultSkin
+     * @param \RequestContext $context
+     * @return boolean
+     */
+    protected function userHasSkinSetting(\RequestContext $context) {
+        global $wgHiddenPrefs, $wgDefaultSkin;
+        if ( in_array( 'skin', $wgHiddenPrefs ) ) {
+            return false;
+        }
+
+        # get the user skin
+        $userSkin = $context->getUser()->getOption( 'skin' );
+        if (!$userSkin) {
+            return false;
+        }
+
+        return $userSkin != $wgDefaultSkin;
     }
     
     /**

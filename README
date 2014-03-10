@@ -5,13 +5,22 @@ This is a MediaWiki extension that persists the value of the "useskin" GET
 or POST parameter in a cookie. All subsequent requests will use that skin. 
 This allows users to change the skin without having to register or log in.
 
+Installation
+------------
+
 To insert a "skin switcher" in your template, put a link somewhere that has the 
 "useskin=yor_skin_name" parameter for the current page. 
 
 To use the default skin again, put a link in your template that has the parameter 
 "usedefaultskin=1".
 
-
 WARNING: The extension will only work if the file cache is off or 
 $wgShowIPinHeader = true;
+
+Interaction with settings of registered users
+---------------------------------------------
+
+If a users is logged and and chooses a different skin in the preferences, this
+skin will always have precedence over the skin stored in the cookie.
+Only when the user chooses the default skin the cookie-based skin switch will work again.
 
